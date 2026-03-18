@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>INT · License Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#F7F9FC;--sf:#FFF;--sf2:#F0F4FA;--bd:#E2E8F2;--bd2:#C8D5E8;
+  --nv:#0F2744;--bl:#1558D6;--bl2:#2D74F0;--bl-lt:#EBF2FF;
+  --gn:#0F9B6A;--gn-lt:#E6F7F1;--yw:#D97706;--yw-lt:#FEF3C7;
+  --rd:#DC2626;--rd-lt:#FEE2E2;--pu:#7C3AED;--pu-lt:#EDE9FE;
+  --tx:#0F2744;--tx2:#4A6282;--tx3:#8BA3BE;
+  --sh:0 1px 4px rgba(15,39,68,.08),0 4px 16px rgba(15,39,68,.06);
+  --r:12px;--r2:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;min-height:100vh}
+.app{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sb{width:224px;min-width:224px;background:var(--nv);display:flex;flex-direction:column;padding:0 0 20px;position:sticky;top:0;height:100vh}
+.sb-logo{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.lrow{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.lsq{width:30px;height:30px;background:linear-gradient(135deg,var(--bl2),#50B8F0);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff}
+.ltxt{font-size:14px;font-weight:800;color:#fff}
+.lsub{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.sb-nav{padding:10px 8px;flex:1;display:flex;flex-direction:column;gap:1px}
+.ns{font-size:10px;color:rgba(255,255,255,.28);letter-spacing:.1em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;padding:12px 10px 4px}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:all .15s;color:rgba(255,255,255,.5);font-size:13px;font-weight:500;user-select:none}
+.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.ni.active{background:rgba(255,255,255,.12);color:#fff;font-weight:700}
+.ni svg{width:14px;height:14px;flex-shrink:0}
+.nc{margin-left:auto;background:var(--rd);color:#fff;font-size:10px;font-family:'JetBrains Mono',monospace;border-radius:99px;padding:1px 6px;font-weight:600}
+.nc.ok{background:var(--gn)}
+.sb-foot{padding:10px 18px;border-top:1px solid rgba(255,255,255,.08);font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.3)}
+.sb-foot span{color:rgba(255,255,255,.6)}
+
+/* MAIN */
+.main{flex:1;min-width:0;overflow-y:auto}
+.page{padding:26px 32px;display:none}
+.page.active{display:block;animation:fu .28s ease both}
+@keyframes fu{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAGE HEADER */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px}
+.ph-title{font-size:21px;font-weight:800;color:var(--nv);letter-spacing:-.02em}
+.ph-sub{font-size:12px;color:var(--tx2);margin-top:3px}
+.ph-act{display:flex;gap:8px;flex-wrap:wrap}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:var(--r2);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif}
+.bp{background:var(--bl);color:#fff}.bp:hover{background:var(--bl2);box-shadow:0 3px 10px rgba(21,88,214,.3)}
+.bo{background:var(--sf);border:1.5px solid var(--bd2);color:var(--tx)}.bo:hover{border-color:var(--bl);color:var(--bl);background:var(--bl-lt)}
+.bgn{background:var(--gn-lt);border:1.5px solid #A7F3D0;color:var(--gn)}
+.bsm{padding:5px 10px;font-size:12px}
+.btn svg{width:13px;height:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* KPI */
+.krow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden;transition:all .18s}
+.kc:hover{box-shadow:var(--sh)}
+.kc-top{position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.kc-lbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;font-family:'JetBrains Mono',monospace;margin-bottom:7px}
+.kc-val{font-size:20px;font-weight:800;color:var(--nv);line-height:1;letter-spacing:-.02em}
+.kc-note{font-size:11px;color:var(--tx3);margin-top:4px}
+
+/* TOOLBAR */
+.tbar{display:flex;gap:9px;margin-bottom:14px;flex-wrap:wrap}
+.sw{position:relative;flex:1;min-width:160px}
+.sw svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--tx3)}
+.si{width:100%;background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r2);padding:8px 10px 8px 32px;color:var(--tx);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;transition:all .15s}
+.si::placeholder{color:var(--tx3)}.si:focus{border-color:var(--bl);box-shadow:0 0 0 3px rgba(21,88,214,.07)}
+.sel{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r2);padding:8px 11px;color:var(--tx);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;cursor:pointer}
+.sel:focus{border-color:var(--bl)}
+
+/* TABLE */
+.tc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 13px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-family:'JetBrains Mono',monospace;color:var(--tx3);background:var(--sf2);border-bottom:1.5px solid var(--bd);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--bd);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--bg)}
+tbody td{padding:11px 13px;font-size:13px;vertical-align:top}
+.tn{font-weight:700;color:var(--nv)}.ts{font-size:11px;color:var(--tx3);font-family:'JetBrains Mono',monospace;margin-top:1px}
+.tm{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tx2)}
+.tv{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--nv)}
+.tpr{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--bl)}
+.tgn{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--gn)}
+.trd{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--rd)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.bms{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.bgoog{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
+.bzo{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA}
+.bpaid{background:var(--gn-lt);color:var(--gn);border:1px solid #A7F3D0}
+.bpend{background:var(--yw-lt);color:var(--yw);border:1px solid #FDE68A}
+.bover{background:var(--rd-lt);color:var(--rd);border:1px solid #FECACA}
+.bfa{background:#EEF4FF;color:#1558D6;border:1px solid #BFDBFE;font-size:10px;padding:1px 6px;border-radius:4px}
+.bfm{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;font-size:10px;padding:1px 6px;border-radius:4px}
+
+/* MULTI-SKU inside table */
+.sku-list{display:flex;flex-direction:column;gap:6px}
+.sku-row{background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;font-size:12px}
+.sku-row-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px}
+.sku-name{font-weight:600;color:var(--nv);font-size:12px}
+.sku-nums{display:grid;grid-template-columns:repeat(4,auto);gap:4px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tx2);margin-top:4px}
+.sku-lbl{color:var(--tx3);font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+.profit-pill{display:inline-flex;align-items:center;gap:3px;background:var(--gn-lt);color:var(--gn);border:1px solid #A7F3D0;border-radius:99px;font-size:10px;font-weight:700;padding:1px 7px;font-family:'JetBrains Mono',monospace}
+.profit-pill.low{background:var(--yw-lt);color:var(--yw);border-color:#FDE68A}
+.profit-pill.neg{background:var(--rd-lt);color:var(--rd);border-color:#FECACA}
+
+/* ROW ACTIONS */
+.ra{display:flex;gap:4px;opacity:0;transition:opacity .12s}
+tr:hover .ra{opacity:1}
+.ib{background:none;border:1.5px solid var(--bd);border-radius:5px;padding:3px 6px;cursor:pointer;color:var(--tx3);transition:all .12s;display:inline-flex;font-size:11px}
+.ib:hover{background:var(--bl-lt);color:var(--bl);border-color:#BFDBFE}
+.ib.del:hover{background:var(--rd-lt);color:var(--rd);border-color:#FECACA}
+.ib.sc:hover{background:var(--gn-lt);color:var(--gn);border-color:#A7F3D0}
+
+/* RENEWAL BAR */
+.rb{display:flex;align-items:center;gap:7px}
+.rb-tr{width:50px;height:4px;background:var(--bd);border-radius:99px;overflow:hidden}
+.rb-fi{height:100%;border-radius:99px}
+.rok{background:linear-gradient(90deg,var(--gn),#34D399)}.rwrn{background:linear-gradient(90deg,var(--yw),#FBBF24)}.rdng{background:linear-gradient(90deg,var(--rd),#F87171)}
+.rb-n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tx3)}
+
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(15,39,68,.42);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;padding:16px;backdrop-filter:blur(4px)}
+.ov.open{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border:1.5px solid var(--bd);border-radius:16px;padding:26px;width:100%;max-width:780px;max-height:92vh;overflow-y:auto;transform:translateY(16px) scale(.97);transition:transform .25s;box-shadow:0 20px 70px rgba(15,39,68,.2)}
+.ov.open .modal{transform:translateY(0) scale(1)}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.mt{font-size:17px;font-weight:800;color:var(--nv)}
+.mc{background:var(--sf2);border:1.5px solid var(--bd);border-radius:6px;padding:3px 9px;cursor:pointer;color:var(--tx2);font-size:12px;transition:all .12s}
+.mc:hover{background:var(--rd-lt);color:var(--rd);border-color:#FECACA}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fi{display:flex;flex-direction:column;gap:4px}.fi.full{grid-column:1/-1}
+.fl{font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-family:'JetBrains Mono',monospace;color:var(--tx2);font-weight:600}
+.fh{background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--r2);padding:9px 11px;color:var(--tx);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;transition:all .15s;width:100%}
+.fh:focus{border-color:var(--bl);background:var(--sf);box-shadow:0 0 0 3px rgba(21,88,214,.07)}
+.fh::placeholder{color:var(--tx3)}.fh option{background:var(--sf)}
+.fh[readonly]{background:var(--sf2);color:var(--tx2);cursor:default;border-style:dashed}
+.mft{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1.5px solid var(--bd)}
+
+/* FREQ TOGGLE */
+.freq-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fqbtn{background:var(--sf2);border:2px solid var(--bd);border-radius:9px;padding:10px 14px;cursor:pointer;transition:all .15s;user-select:none}
+.fqbtn.active{background:var(--bl-lt);border-color:var(--bl)}
+.fqbtn-icon{font-size:16px;margin-bottom:4px}
+.fqbtn-title{font-size:12px;font-weight:700;color:var(--nv)}
+.fqbtn-desc{font-size:10px;color:var(--tx3);margin-top:2px;line-height:1.4}
+.fqbtn.active .fqbtn-title{color:var(--bl)}
+.end-hint{font-size:11px;color:var(--gn);margin-top:3px;font-family:'JetBrains Mono',monospace;font-weight:600}
+
+/* MULTI-SKU BUILDER in modal */
+.sku-builder{margin-top:6px}
+.sku-builder-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sku-builder-title{font-size:12px;font-weight:700;color:var(--nv)}
+.sku-card{background:var(--sf2);border:1.5px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
+.sku-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sku-card-num{font-size:11px;font-weight:700;color:var(--bl);font-family:'JetBrains Mono',monospace;background:var(--bl-lt);border-radius:99px;padding:2px 9px}
+.sku-remove{background:none;border:1.5px solid var(--bd);border-radius:5px;padding:2px 7px;cursor:pointer;color:var(--tx3);font-size:11px;transition:all .12s}
+.sku-remove:hover{background:var(--rd-lt);color:var(--rd);border-color:#FECACA}
+.sku-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:10px}
+.sku-profit-preview{margin-top:8px;padding:8px 10px;background:var(--sf);border:1px solid var(--bd);border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tx2);display:flex;gap:16px;flex-wrap:wrap}
+.spp-item{display:flex;flex-direction:column;gap:2px}
+.spp-lbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em}
+.spp-val{font-weight:700;font-size:13px}
+
+/* PRO-RATA PREVIEW */
+.pre{background:linear-gradient(135deg,#EBF8FF,#E6F7F1);border:1.5px solid #A7E8EF;border-radius:10px;padding:14px 16px;margin-top:14px}
+.pre-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#0EA5B0;font-family:'JetBrains Mono',monospace;margin-bottom:8px}
+.pre-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ps{background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:8px 10px;text-align:center}
+.ps-lbl{font-size:10px;color:var(--tx3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ps-val{font-size:13px;font-weight:800;color:var(--nv);font-family:'JetBrains Mono',monospace}
+.ps-val.blue{color:var(--bl)}.ps-val.green{color:var(--gn)}
+
+/* SEAT CHANGE MODAL */
+.change-type-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.ctbtn{background:var(--sf);border:2px solid var(--bd);border-radius:9px;padding:12px;cursor:pointer;transition:all .15s;text-align:center;user-select:none}
+.ctbtn.add.active{background:#F0FDF4;border-color:#A7F3D0}
+.ctbtn.rem.active{background:var(--rd-lt);border-color:#FECACA}
+.ctbtn-icon{font-size:20px;margin-bottom:4px}
+.ctbtn-lbl{font-size:12px;font-weight:700;color:var(--nv)}
+.ctbtn.add.active .ctbtn-lbl{color:var(--gn)}.ctbtn.rem.active .ctbtn-lbl{color:var(--rd)}
+.sc-section{background:var(--sf2);border:1.5px solid var(--bd);border-radius:10px;padding:16px;margin-top:14px}
+.sc-sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;font-family:'JetBrains Mono',monospace;color:var(--bl);margin-bottom:10px}
+.step-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.sc-step{display:flex;align-items:flex-start;gap:9px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--tx2);line-height:1.5}
+.sc-step-n{background:var(--bl);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+.sc-step.last{font-weight:700;color:var(--nv);padding-top:8px;border-top:1.5px solid var(--bd);margin-top:4px}
+.sc-step.last .sc-step-n{background:var(--gn)}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.res-box{background:var(--sf);border-radius:9px;padding:12px;text-align:center;border:1.5px solid var(--bd)}
+.res-box.blue{border-color:#BFDBFE;background:var(--bl-lt)}.res-box.green{border-color:#A7F3D0;background:var(--gn-lt)}
+.res-box-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-family:'JetBrains Mono',monospace;color:var(--tx3);margin-bottom:5px}
+.res-box-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.res-box-val.blue{color:var(--bl)}.res-box-val.green{color:var(--gn)}
+.res-box-sub{font-size:10px;color:var(--tx3);font-family:'JetBrains Mono',monospace;margin-top:3px}
+
+/* PROFIT PAGE */
+.profit-krow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.vendor-profit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.vpc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.vpc-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.vpc-title{font-size:13px;font-weight:700;color:var(--nv)}
+.vpc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.vpc-row:last-child{border-bottom:none;padding-top:10px;font-weight:700}
+.vpc-lbl{color:var(--tx2)}.vpc-val{font-family:'JetBrains Mono',monospace;font-weight:600}
+
+/* RENEWALS */
+.rcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-bottom:18px}
+.rrc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:14px;transition:all .16s}
+.rrc:hover{box-shadow:var(--sh);transform:translateY(-1px)}
+.rrc.urg{border-color:#FECACA;background:#FFFAFA}.rrc.wrn{border-color:#FDE68A;background:#FFFDF0}
+.rrc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.rrc-n{font-weight:700;font-size:13px;color:var(--nv)}.rrc-v{font-size:11px;color:var(--tx3);margin-top:1px}
+.rrc-d{font-size:19px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.du{color:var(--rd)}.dw{color:var(--yw)}
+.rrc-f{font-size:11px;color:var(--tx3);font-family:'JetBrains Mono',monospace;margin-top:3px}
+.sdiv{display:flex;align-items:center;gap:9px;margin:16px 0 10px}
+.sdiv-l{font-size:11px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.07em;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.sdiv-line{flex:1;height:1.5px;background:var(--bd)}
+.sdiv-chip{background:var(--sf2);border:1.5px solid var(--bd);border-radius:99px;padding:2px 9px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--tx3);white-space:nowrap}
+
+/* EMPTY / TOAST / LOADER */
+.empty{text-align:center;padding:44px 20px;color:var(--tx3)}
+.ei{font-size:36px;margin-bottom:8px}.et{font-size:15px;font-weight:700;color:var(--tx2);margin-bottom:3px}
+.toast{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--nv);color:#fff;border-radius:9px;padding:11px 16px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;transform:translateX(130%);transition:transform .25s;box-shadow:var(--sh);max-width:300px}
+.toast.show{transform:translateX(0)}
+.tdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:900px){.krow,.profit-krow{grid-template-columns:1fr 1fr}.vendor-profit-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.krow{grid-template-columns:1fr}.fg2{grid-template-columns:1fr}.sb{display:none}.page{padding:14px}.sku-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="lrow"><div class="lsq">IN</div><div class="ltxt">INT</div></div>
+    <div class="lsub">License Manager</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="ns">Main</div>
+    <div class="ni active" onclick="nav('licenses',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      License Register
+    </div>
+    <div class="ni" onclick="nav('profit',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      Profit Report
+    </div>
+    <div class="ni" onclick="nav('changes',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+      Seat Changes
+      <span class="nc ok" id="sc-chip">0</span>
+    </div>
+    <div class="ni" onclick="nav('renewals',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+      Renewals
+      <span class="nc" id="ren-chip">—</span>
+    </div>
+  </nav>
+  <div class="sb-foot">Today: <span id="today-lbl"></span></div>
+</aside>
+
+<main class="main">
+
+<!-- ══ LICENSES ══ -->
+<div class="page active" id="pg-licenses">
+  <div class="ph">
+    <div><div class="ph-title">License Register</div><div class="ph-sub">All customers · multi-SKU · profit tracking</div></div>
+    <div class="ph-act">
+      <button class="btn bo bsm" onclick="exportCSV()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
+      </button>
+      <button class="btn bp" onclick="openAdd()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Customer
+      </button>
+    </div>
+  </div>
+  <div class="krow" id="kpi-row"></div>
+  <div class="tbar">
+    <div class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="si" id="srch" placeholder="Search customers…" oninput="renderTable()"/></div>
+    <select class="sel" id="fv" onchange="renderTable()"><option value="">All Vendors</option><option>Microsoft</option><option>Google</option><option>Zoho</option></select>
+    <select class="sel" id="fs" onchange="renderTable()"><option value="">All Status</option><option>Paid</option><option>Pending</option><option>Overdue</option></select>
+  </div>
+  <div class="tc"><div class="tw">
+    <table>
+      <thead><tr><th>Customer</th><th>SKUs / Products</th><th>Invoice to Customer</th><th>Our Vendor Cost</th><th>Gross Profit</th><th>Renewal</th><th>Status</th><th></th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div></div>
+</div>
+
+<!-- ══ PROFIT REPORT ══ -->
+<div class="page" id="pg-profit">
+  <div class="ph"><div><div class="ph-title">Profit Report</div><div class="ph-sub">Revenue · cost · margin across all customers and vendors</div></div>
+  <div class="ph-act"><button class="btn bo bsm" onclick="exportProfitCSV()">Export Profit Report</button></div></div>
+  <div class="profit-krow" id="profit-kpi"></div>
+  <div class="vendor-profit-grid" id="vendor-profit"></div>
+  <div class="sdiv"><div class="sdiv-l">Customer-wise Profit</div><div class="sdiv-line"></div></div>
+  <div class="tc"><div class="tw"><table>
+    <thead><tr><th>Customer</th><th>SKUs</th><th>Invoice to Customer (₹)</th><th>Vendor Cost (₹)</th><th>Gross Profit (₹)</th><th>Margin %</th><th>Status</th></tr></thead>
+    <tbody id="profit-tbody"></tbody>
+  </table></div></div>
+</div>
+
+<!-- ══ SEAT CHANGES ══ -->
+<div class="page" id="pg-changes">
+  <div class="ph"><div><div class="ph-title">Seat Changes</div><div class="ph-sub">Mid-cycle additions &amp; removals — pro-rata auto-calculated</div></div></div>
+  <div class="tc"><div class="tw"><table>
+    <thead><tr><th>Date</th><th>Customer</th><th>SKU</th><th>Change</th><th>Seats Before → After</th><th>Pro-Rata Bill (₹)</th><th>Next Month Billing (₹)</th></tr></thead>
+    <tbody id="sc-tbody"></tbody>
+  </table></div></div>
+</div>
+
+<!-- ══ RENEWALS ══ -->
+<div class="page" id="pg-renewals">
+  <div class="ph"><div><div class="ph-title">Renewals Dashboard</div><div class="ph-sub">Expiring licenses · act before they lapse</div></div></div>
+  <div class="sdiv"><div class="sdiv-l">Urgent</div><div class="sdiv-line"></div><div class="sdiv-chip">≤ 30 days</div></div>
+  <div class="rcards" id="urg-cards"></div>
+  <div class="sdiv"><div class="sdiv-l">Upcoming</div><div class="sdiv-line"></div><div class="sdiv-chip">31–90 days</div></div>
+  <div class="rcards" id="wrn-cards"></div>
+  <div class="sdiv"><div class="sdiv-l">All Renewals</div><div class="sdiv-line"></div></div>
+  <div class="tc"><div class="tw"><table>
+    <thead><tr><th>Customer</th><th>SKU</th><th>Billing</th><th>Seats</th><th>Renewal Date</th><th>Days Left</th><th>Invoice/mo or yr</th><th>Status</th></tr></thead>
+    <tbody id="rtbody"></tbody>
+  </table></div></div>
+</div>
+
+</main>
+</div>
+
+<!-- ══ ADD/EDIT CUSTOMER MODAL ══ -->
+<div class="ov" id="modal-ov">
+<div class="modal" style="max-width:860px">
+  <div class="mh"><div class="mt" id="m-title">Add New Customer</div><button class="mc" onclick="closeModal('modal-ov')">✕ Close</button></div>
+
+  <!-- Customer info -->
+  <div class="fg2" style="margin-bottom:16px">
+    <div class="fi"><label class="fl">Customer Name *</label><input class="fh" id="f-name" placeholder="Acme Corp Pvt Ltd"/></div>
+    <div class="fi"><label class="fl">Contact Email</label><input class="fh" id="f-email" type="email" placeholder="admin@company.com"/></div>
+    <div class="fi"><label class="fl">License Start Date *</label><input class="fh" id="f-start" type="date" oninput="onStartChange()"/></div>
+    <div class="fi">
+      <label class="fl">Billing Frequency *</label>
+      <div class="freq-wrap" style="margin-top:4px">
+        <div class="fqbtn active" id="fq-annual" onclick="setFreq('Annual')"><div class="fqbtn-icon">📅</div><div class="fqbtn-title">Annual</div><div class="fqbtn-desc">End date = 1 year from start</div></div>
+        <div class="fqbtn" id="fq-monthly" onclick="setFreq('Monthly')"><div class="fqbtn-icon">🗓️</div><div class="fqbtn-title">Monthly</div><div class="fqbtn-desc">End date = 1 month from start</div></div>
+      </div>
+      <input type="hidden" id="f-freq" value="Annual"/>
+    </div>
+    <div class="fi"><label class="fl">License End Date (auto)</label><input class="fh" id="f-end" type="date" readonly/><span class="end-hint" id="end-hint">✦ Auto-calculated from start</span></div>
+    <div class="fi"><label class="fl">Purchase / Event Date</label><input class="fh" id="f-event" type="date" oninput="refreshAllSKUPreviews()"/><span style="font-size:11px;color:var(--tx3);margin-top:3px">For pro-rata — date customer actually starts</span></div>
+    <div class="fi"><label class="fl">Payment Status</label><select class="fh" id="f-status"><option>Pending</option><option>Paid</option><option>Overdue</option></select></div>
+    <div class="fi"><label class="fl">Notes</label><input class="fh" id="f-notes" placeholder="Optional"/></div>
+  </div>
+
+  <!-- Multi-SKU builder -->
+  <div style="border-top:1.5px solid var(--bd);padding-top:16px">
+    <div class="sku-builder-header">
+      <div class="sku-builder-title">📦 SKUs / Products <span style="font-size:11px;color:var(--tx3);font-weight:400">(add one or more)</span></div>
+      <button class="btn bgn bsm" onclick="addSKU()">+ Add SKU</button>
+    </div>
+    <div id="sku-builder-list"></div>
+  </div>
+
+  <div class="mft">
+    <button class="btn bo" onclick="closeModal('modal-ov')">Cancel</button>
+    <button class="btn bp" onclick="saveRecord()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Save Customer
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- ══ SEAT CHANGE MODAL ══ -->
+<div class="ov" id="sc-modal-ov">
+<div class="modal" style="max-width:560px">
+  <div class="mh">
+    <div><div class="mt" id="sc-modal-title">Seat Change</div><div style="font-size:12px;color:var(--tx2);margin-top:2px" id="sc-modal-sub"></div></div>
+    <button class="mc" onclick="closeModal('sc-modal-ov')">✕ Close</button>
+  </div>
+  <div class="change-type-wrap">
+    <div class="ctbtn add active" id="ct-add" onclick="setSCType('add')"><div class="ctbtn-icon">➕</div><div class="ctbtn-lbl">Add Seats</div></div>
+    <div class="ctbtn rem" id="ct-rem" onclick="setSCType('remove')"><div class="ctbtn-icon">➖</div><div class="ctbtn-lbl">Remove Seats</div></div>
+  </div>
+  <div class="fg2" style="margin-bottom:14px">
+    <div class="fi"><label class="fl">Current Seats</label><input class="fh" id="sc-old" type="number" readonly/></div>
+    <div class="fi"><label class="fl" id="sc-new-lbl">Seats to Add</label><input class="fh" id="sc-delta" type="number" placeholder="e.g. 5" min="1" oninput="calcSC()"/></div>
+    <div class="fi full"><label class="fl">Change Date</label><input class="fh" id="sc-date" type="date" oninput="calcSC()"/></div>
+  </div>
+  <div class="sc-section" id="sc-result" style="display:none">
+    <div class="sc-sec-title">📊 Billing Breakdown</div>
+    <div class="step-list" id="sc-steps"></div>
+    <div class="res-grid">
+      <div class="res-box blue"><div class="res-box-lbl" id="pr-lbl">Pro-Rata This Cycle</div><div class="res-box-val blue" id="sc-pr-val">—</div><div class="res-box-sub" id="sc-pr-sub"></div></div>
+      <div class="res-box green"><div class="res-box-lbl">Next Full Billing</div><div class="res-box-val green" id="sc-nm-val">—</div><div class="res-box-sub" id="sc-nm-sub"></div></div>
+    </div>
+  </div>
+  <div class="mft">
+    <button class="btn bo" onclick="closeModal('sc-modal-ov')">Cancel</button>
+    <button class="btn bp" id="sc-save-btn" onclick="saveSeatChange()" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Log Change
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- SETUP BANNER -->
+<div id="setup-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:500;background:#FEF3C7;border-bottom:2px solid #FDE68A;padding:12px 24px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+  <div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">⚙️</span>
+    <div><div style="font-weight:700;color:#92400E;font-size:13px">Supabase not configured</div>
+    <div style="font-size:11px;color:#B45309">Open the HTML file in Notepad and replace the two placeholder values with your Supabase URL and anon key.</div></div>
+  </div>
+  <a href="https://supabase.com/dashboard" target="_blank" style="background:#D97706;color:#fff;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;text-decoration:none">Open Supabase →</a>
+</div>
+
+<!-- LOADER -->
+<div id="loader" style="display:flex;position:fixed;inset:0;background:rgba(255,255,255,.88);z-index:400;align-items:center;justify-content:center;flex-direction:column;gap:14px;backdrop-filter:blur(4px)">
+  <div style="width:34px;height:34px;border:3px solid #E2E8F2;border-top-color:#1558D6;border-radius:50%;animation:spin .7s linear infinite"></div>
+  <div id="loader-msg" style="font-size:13px;font-weight:600;color:#4A6282;font-family:'Plus Jakarta Sans',sans-serif">Connecting…</div>
+</div>
+
+<div class="toast" id="toast"><div class="tdot" id="tdot"></div><span id="tmsg"></span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ════════════════════════════════════════════
+// SUPABASE CONFIG
+// ════════════════════════════════════════════
+const SUPABASE_URL = 'https://otomaygrgcfdzchtajxc.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b21heWdyZ2NmZHpjaHRhanhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MzM2MDYsImV4cCI6MjA4OTQwOTYwNn0.YJZZ7694d944Ygmg0szYd0LlXUDUVM_gblXs4ylNIGA';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// In-memory cache
+let DB    = []; // customers (each has .skus array)
+let SCLog = [];
+
+// ════════════════════════════════════════════
+// DATE UTILS
+// ════════════════════════════════════════════
+const today    = () => new Date().toISOString().split('T')[0];
+const dBetween = (a,b) => Math.round((new Date(b)-new Date(a))/864e5);
+const dToRenew = e => dBetween(today(), e);
+const INR      = n => '₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:0});
+const PCT      = n => (Number(n||0)).toFixed(1)+'%';
+const fmtD     = s => { if(!s) return '—'; const d=new Date(s); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); };
+const fmtMY    = s => { if(!s) return '—'; const d=new Date(s); return d.toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
+
+function daysInMonth(ds){ const d=new Date(ds); return new Date(d.getFullYear(),d.getMonth()+1,0).getDate(); }
+function endOfMonth(ds){ const d=new Date(ds); return new Date(d.getFullYear(),d.getMonth()+1,0).toISOString().split('T')[0]; }
+function addMonths(ds,n){ const d=new Date(ds); d.setMonth(d.getMonth()+n); return d.toISOString().split('T')[0]; }
+function addYears(ds,n){ const d=new Date(ds); d.setFullYear(d.getFullYear()+n); d.setDate(d.getDate()-1); return d.toISOString().split('T')[0]; }
+function startOfNextMonth(ds){ const d=new Date(ds); return new Date(d.getFullYear(),d.getMonth()+1,1).toISOString().split('T')[0]; }
+
+// ════════════════════════════════════════════
+// PROFIT ENGINE
+// ════════════════════════════════════════════
+// sku: { vendor, product, seats, vendorRate, invoiceRate, freq }
+// vendorRate = what INT pays Google/Zoho/MS per seat
+// invoiceRate = what INT charges the customer per seat
+function skuProfit(sku, freq) {
+  const f = freq || sku.freq || 'Annual';
+  const mul = f === 'Monthly' ? 1 : 12; // normalize to monthly for consistent comparison
+  const vendorCostAnn  = sku.vendorRate  * sku.seats * (f==='Monthly'?12:1);
+  const invoiceAnn     = sku.invoiceRate * sku.seats * (f==='Monthly'?12:1);
+  const profitAnn      = invoiceAnn - vendorCostAnn;
+  const marginPct      = invoiceAnn > 0 ? (profitAnn / invoiceAnn * 100) : 0;
+  return { vendorCostAnn, invoiceAnn, profitAnn, marginPct };
+}
+
+function customerTotals(cust) {
+  let vendorCostAnn=0, invoiceAnn=0;
+  (cust.skus||[]).forEach(s=>{
+    const p = skuProfit(s, cust.freq);
+    vendorCostAnn += p.vendorCostAnn;
+    invoiceAnn    += p.invoiceAnn;
+  });
+  const profitAnn = invoiceAnn - vendorCostAnn;
+  const marginPct = invoiceAnn>0 ? (profitAnn/invoiceAnn*100) : 0;
+  return { vendorCostAnn, invoiceAnn, profitAnn, marginPct };
+}
+
+// ════════════════════════════════════════════
+// PRO-RATA ENGINE
+// ════════════════════════════════════════════
+function proRata(invoiceRate, seats, start, end, event, freq) {
+  freq = freq||'Annual';
+  const ann = freq==='Monthly' ? invoiceRate*seats*12 : invoiceRate*seats;
+  const monthly = ann/12;
+  if(freq==='Monthly'){
+    const tot=daysInMonth(event), eom=endOfMonth(event), rem=dBetween(event,eom)+1;
+    return { amount:Math.round(monthly*rem/tot), tot, rem, daily:Math.round(monthly/tot*100)/100, ann, monthly };
+  } else {
+    const tot=dBetween(start,end)+1, rem=Math.max(dBetween(event,end)+1,0);
+    return { amount:tot>0?Math.round(ann*rem/tot):0, tot, rem, daily:tot>0?Math.round(ann/tot*100)/100:0, ann, monthly };
+  }
+}
+
+// ════════════════════════════════════════════
+// SUPABASE DATA LAYER
+// ════════════════════════════════════════════
+// Schema: customers table has all customer fields + skus stored as JSONB
+function custToRow(c) {
+  return {
+    id:c.id, name:c.name, email:c.email||'',
+    freq:c.freq||'Annual', start_date:c.start, end_date:c.end,
+    event_date:c.event||c.start, status:c.status, notes:c.notes||'',
+    skus: c.skus||[]
+  };
+}
+function rowToCust(r) {
+  return {
+    id:r.id, name:r.name, email:r.email||'',
+    freq:r.freq||'Annual', start:r.start_date, end:r.end_date,
+    event:r.event_date||r.start_date, status:r.status, notes:r.notes||'',
+    skus: r.skus||[]
+  };
+}
+function rowToSC(r) {
+  return {
+    id:r.id, custId:r.cust_id, customer:r.customer, vendor:r.vendor,
+    sku:r.sku_name, freq:r.freq, type:r.type, delta:r.delta,
+    oldSeats:r.old_seats, newSeats:r.new_seats, date:r.change_date,
+    proRata:r.pro_rata, nextMonth:r.next_month, invoiceRate:r.invoice_rate
+  };
+}
+
+function showLoader(msg){ document.getElementById('loader-msg').textContent=msg||'Loading…'; document.getElementById('loader').style.display='flex'; }
+function hideLoader(){ document.getElementById('loader').style.display='none'; }
+
+async function loadAll() {
+  if(SUPABASE_URL==='PASTE_YOUR_PROJECT_URL_HERE'){ document.getElementById('setup-banner').style.display='flex'; hideLoader(); return; }
+  showLoader('Loading data…');
+  try {
+    const [{data:custs,error:e1},{data:scs,error:e2}] = await Promise.all([
+      sb.from('customers').select('*').order('created_at',{ascending:false}),
+      sb.from('seat_changes').select('*').order('created_at',{ascending:false})
+    ]);
+    if(e1) throw e1; if(e2) throw e2;
+    DB    = (custs||[]).map(rowToCust);
+    SCLog = (scs||[]).map(rowToSC);
+  } catch(err){ toast('DB error: '+err.message,'red'); console.error(err); }
+  hideLoader(); renderAll();
+}
+
+// ════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════
+function nav(pg,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('pg-'+pg).classList.add('active'); el.classList.add('active');
+  if(pg==='profit')   renderProfit();
+  if(pg==='renewals') renderRen();
+  if(pg==='changes')  renderSCLog();
+}
+
+// ════════════════════════════════════════════
+// KPI BAR
+// ════════════════════════════════════════════
+function renderKPI(){
+  let totalInvoice=0, totalCost=0;
+  DB.forEach(c=>{ const t=customerTotals(c); totalInvoice+=t.invoiceAnn; totalCost+=t.vendorCostAnn; });
+  const totalProfit = totalInvoice - totalCost;
+  const margin = totalInvoice>0 ? totalProfit/totalInvoice*100 : 0;
+  const ov = DB.filter(c=>c.status==='Overdue').length;
+  const ex = DB.filter(c=>{ const d=dToRenew(c.end); return d>=0&&d<=30; }).length;
+  document.getElementById('kpi-row').innerHTML=`
+    <div class="kc"><div class="kc-top" style="background:linear-gradient(90deg,#1558D6,#60A5FA)"></div><div class="kc-lbl">Customers</div><div class="kc-val">${DB.length}</div><div class="kc-note">Total accounts</div></div>
+    <div class="kc"><div class="kc-top" style="background:linear-gradient(90deg,#0F9B6A,#34D399)"></div><div class="kc-lbl">Annual Invoice</div><div class="kc-val" style="font-size:16px">${INR(totalInvoice)}</div><div class="kc-note">Billed to customers</div></div>
+    <div class="kc"><div class="kc-top" style="background:linear-gradient(90deg,#D97706,#FBBF24)"></div><div class="kc-lbl">Vendor Cost</div><div class="kc-val" style="font-size:16px">${INR(totalCost)}</div><div class="kc-note">Paid to vendors</div></div>
+    <div class="kc"><div class="kc-top" style="background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div><div class="kc-lbl">Gross Profit</div><div class="kc-val" style="font-size:16px;color:var(--pu)">${INR(totalProfit)}</div><div class="kc-note">Margin: ${PCT(margin)}</div></div>
+    <div class="kc"><div class="kc-top" style="background:linear-gradient(90deg,#DC2626,#F87171)"></div><div class="kc-lbl">Overdue / Expiring</div><div class="kc-val">${ov} / ${ex}</div><div class="kc-note">Need attention</div></div>`;
+  document.getElementById('ren-chip').textContent=ex||'—';
+  document.getElementById('ren-chip').className='nc'+(ex>0?'':' ok');
+  document.getElementById('sc-chip').textContent=SCLog.length;
+}
+
+// ════════════════════════════════════════════
+// MAIN TABLE
+// ════════════════════════════════════════════
+const VM={Microsoft:'ms',Google:'goog',Zoho:'zo'};
+const SM={Paid:'paid',Pending:'pend',Overdue:'over'};
+
+function renderTable(){
+  const q=(document.getElementById('srch').value||'').toLowerCase();
+  const vf=document.getElementById('fv').value;
+  const sf=document.getElementById('fs').value;
+  const rows=DB.filter(c=>{
+    const nameMatch=c.name.toLowerCase().includes(q)||(c.skus||[]).some(s=>s.product.toLowerCase().includes(q));
+    const vendorMatch=!vf||(c.skus||[]).some(s=>s.vendor===vf);
+    return nameMatch&&vendorMatch&&(!sf||c.status===sf);
+  });
+  const tb=document.getElementById('tbody');
+  if(!rows.length){ tb.innerHTML=`<tr><td colspan="8"><div class="empty"><div class="ei">🔍</div><div class="et">No records found</div></div></td></tr>`; return; }
+  tb.innerHTML=rows.map(c=>{
+    const tot=customerTotals(c);
+    const dtR=dToRenew(c.end);
+    const el=Math.max(0,Math.min(100,Math.round(dBetween(c.start,today())/Math.max(1,dBetween(c.start,c.end))*100)));
+    const bc=dtR<30?'rdng':dtR<90?'rwrn':'rok';
+    const marginCls=tot.marginPct<10?'neg':tot.marginPct<20?'low':'';
+    const skuHtml=(c.skus||[]).map((s,i)=>{
+      const sp=skuProfit(s,c.freq);
+      const pr=proRata(s.invoiceRate,s.seats,c.start,c.end,c.event||c.start,c.freq);
+      return`<div class="sku-row">
+        <div class="sku-row-top">
+          <span class="badge b${VM[s.vendor]||'ms'}">${s.vendor}</span>
+          <span class="sku-name">${s.product}</span>
+          <span class="${c.freq==='Monthly'?'bfm':'bfa'} bfa">${c.freq}</span>
+        </div>
+        <div class="sku-nums">
+          <div><div class="sku-lbl">Seats</div><div style="font-weight:700">${s.seats}</div></div>
+          <div><div class="sku-lbl">Invoice/seat</div><div>${INR(s.invoiceRate)}</div></div>
+          <div><div class="sku-lbl">Cost/seat</div><div style="color:var(--tx3)">${INR(s.vendorRate)}</div></div>
+          <div><div class="sku-lbl">Pro-Rata</div><div style="color:var(--bl);font-weight:700">${INR(pr.amount)}</div></div>
+        </div>
+      </div>`;
+    }).join('');
+    return`<tr>
+      <td><div class="tn">${c.name}</div><div class="ts">${c.id} · ${c.email}</div><div class="ts" style="margin-top:3px"><span class="badge b${SM[c.status]||'pend'}">${c.status}</span></div></td>
+      <td><div class="sku-list">${skuHtml}</div></td>
+      <td><div class="tv" style="font-size:15px">${INR(tot.invoiceAnn)}<span style="font-size:10px;color:var(--tx3);font-weight:400">/yr</span></div><div class="ts">${INR(Math.round(tot.invoiceAnn/12))}/mo</div></td>
+      <td><div class="tv" style="color:var(--tx2)">${INR(tot.vendorCostAnn)}<span style="font-size:10px;color:var(--tx3);font-weight:400">/yr</span></div></td>
+      <td><div class="tgn" style="font-size:15px">${INR(tot.profitAnn)}</div><div><span class="profit-pill ${marginCls}">${PCT(tot.marginPct)}</span></div></td>
+      <td><div class="rb"><div class="rb-tr"><div class="rb-fi ${bc}" style="width:${el}%"></div></div><div class="rb-n">${dtR<0?'Exp':dtR+'d'}</div></div><div class="ts">${fmtD(c.end)}</div></td>
+      <td><span class="badge b${SM[c.status]||'pend'}">${c.status}</span></td>
+      <td><div class="ra">
+        <button class="ib sc" onclick="openSCModal('${c.id}')" title="Seat change">👥</button>
+        <button class="ib" onclick="openEdit('${c.id}')" title="Edit">✏️</button>
+        <button class="ib del" onclick="delRec('${c.id}')" title="Delete">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+// PROFIT PAGE
+// ════════════════════════════════════════════
+function renderProfit(){
+  let totalInv=0,totalCost=0;
+  DB.forEach(c=>{const t=customerTotals(c);totalInv+=t.invoiceAnn;totalCost+=t.vendorCostAnn;});
+  const totalProfit=totalInv-totalCost, margin=totalInv>0?totalProfit/totalInv*100:0;
+  document.getElementById('profit-kpi').innerHTML=`
+    <div class="kc"><div class="kc-top" style="background:linear-gradient(90deg,#0F9B6A,#34D399)"></div><div class="kc-lbl">Total Annual Invoice</div><div class="kc-val" style="font-size:15px">${INR(totalInv)}</div></div>
+    <div class="kc"><div class="kc-top" style="background:linear-gradient(90deg,#D97706,#FBBF24)"></div><div class="kc-lbl">Total Vendor Cost</div><div class="kc-val" style="font-size:15px">${INR(totalCost)}</div></div>
+    <div class="kc"><div class="kc-top" style="background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div><div class="kc-lbl">Gross Profit</div><div class="kc-val" style="font-size:15px;color:var(--pu)">${INR(totalProfit)}</div></div>
+    <div class="kc"><div class="kc-top" style="background:linear-gradient(90deg,#1558D6,#60A5FA)"></div><div class="kc-lbl">Overall Margin</div><div class="kc-val">${PCT(margin)}</div></div>`;
+
+  // Vendor breakdown
+  const vendors=['Microsoft','Google','Zoho'],vcolors=['#1558D6','#15803D','#C2410C'];
+  document.getElementById('vendor-profit').innerHTML=vendors.map((v,vi)=>{
+    let inv=0,cost=0,seats=0,custs=0;
+    DB.forEach(c=>{
+      const vskus=(c.skus||[]).filter(s=>s.vendor===v);
+      if(!vskus.length) return;
+      custs++;
+      vskus.forEach(s=>{
+        const p=skuProfit(s,c.freq);
+        inv+=p.invoiceAnn; cost+=p.vendorCostAnn; seats+=s.seats;
+      });
+    });
+    const profit=inv-cost, mg=inv>0?profit/inv*100:0;
+    return`<div class="vpc">
+      <div class="vpc-header"><div style="width:10px;height:10px;border-radius:50%;background:${vcolors[vi]}"></div><div class="vpc-title">${v}</div><div class="ts">${custs} customers · ${seats} seats</div></div>
+      <div class="vpc-row"><span class="vpc-lbl">Annual Invoice</span><span class="vpc-val" style="color:var(--gn)">${INR(inv)}</span></div>
+      <div class="vpc-row"><span class="vpc-lbl">Vendor Cost</span><span class="vpc-val" style="color:var(--yw)">${INR(cost)}</span></div>
+      <div class="vpc-row"><span class="vpc-lbl" style="font-weight:700">Gross Profit</span><span class="vpc-val" style="color:var(--pu)">${INR(profit)} <span style="font-size:11px;color:var(--tx3)">(${PCT(mg)})</span></span></div>
+    </div>`;
+  }).join('');
+
+  // Customer table
+  const sorted=[...DB].sort((a,b)=>customerTotals(b).profitAnn-customerTotals(a).profitAnn);
+  document.getElementById('profit-tbody').innerHTML=sorted.map(c=>{
+    const t=customerTotals(c);
+    const skuCount=(c.skus||[]).length;
+    const mcls=t.marginPct<10?'trd':t.marginPct<20?'':' tgn';
+    return`<tr>
+      <td><div class="tn">${c.name}</div><div class="ts">${c.email}</div></td>
+      <td style="text-align:center"><span style="background:var(--bl-lt);color:var(--bl);border-radius:99px;padding:2px 8px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace">${skuCount} SKU${skuCount!==1?'s':''}</span></td>
+      <td class="tv">${INR(t.invoiceAnn)}<div class="ts">${INR(Math.round(t.invoiceAnn/12))}/mo</div></td>
+      <td class="tv" style="color:var(--tx2)">${INR(t.vendorCostAnn)}</td>
+      <td class="tgn" style="font-size:14px">${INR(t.profitAnn)}</td>
+      <td><span class="profit-pill ${t.marginPct<10?'neg':t.marginPct<20?'low':''}">${PCT(t.marginPct)}</span></td>
+      <td><span class="badge b${SM[c.status]||'pend'}">${c.status}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+// RENEWALS
+// ════════════════════════════════════════════
+function renderRen(){
+  // Flatten to per-SKU renewal rows
+  const allRen=[];
+  DB.forEach(c=>{
+    (c.skus||[]).forEach(s=>{
+      allRen.push({...s, custName:c.name, custId:c.id, freq:c.freq, start:c.start, end:c.end, status:c.status});
+    });
+  });
+  allRen.sort((a,b)=>new Date(a.end)-new Date(b.end));
+  const urg=allRen.filter(r=>{const d=dToRenew(r.end);return d>=0&&d<=30;});
+  const wrn=allRen.filter(r=>{const d=dToRenew(r.end);return d>30&&d<=90;});
+  const card=(r,cls)=>{const d=dToRenew(r.end);return`<div class="rrc ${cls}"><div class="rrc-top"><div><div class="rrc-n">${r.custName}</div><div class="rrc-v">${r.vendor} · ${r.product}</div></div><div class="rrc-d ${cls==='urg'?'du':'dw'}">${d}d</div></div><div class="rrc-f">Renews ${fmtD(r.end)} · Invoice ${INR(r.invoiceRate*r.seats)}${r.freq==='Monthly'?'/mo':'/yr'}</div></div>`;};
+  document.getElementById('urg-cards').innerHTML=urg.length?urg.map(r=>card(r,'urg')).join(''):'<div style="color:var(--tx3);font-size:13px;padding:6px">No urgent renewals 🎉</div>';
+  document.getElementById('wrn-cards').innerHTML=wrn.length?wrn.map(r=>card(r,'wrn')).join(''):'<div style="color:var(--tx3);font-size:13px;padding:6px">None in this window</div>';
+  document.getElementById('rtbody').innerHTML=allRen.map(r=>{
+    const d=dToRenew(r.end),dc=d<0?'var(--rd)':d<=30?'var(--rd)':d<=90?'var(--yw)':'var(--gn)';
+    return`<tr><td class="tn">${r.custName}</td><td style="font-size:12px">${r.product}</td><td><span class="${r.freq==='Monthly'?'bfm':'bfa'} bfa">${r.freq}</span></td><td style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700">${r.seats}</td><td class="tm">${fmtD(r.end)}</td><td><span style="font-family:'JetBrains Mono',monospace;font-weight:800;color:${dc}">${d<0?'Expired':d+'d'}</span></td><td class="tv">${INR(r.invoiceRate*r.seats)}${r.freq==='Monthly'?'/mo':'/yr'}</td><td><span class="badge b${SM[r.status]||'pend'}">${r.status}</span></td></tr>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+// SKU BUILDER (in modal)
+// ════════════════════════════════════════════
+let skuList = []; // array of {vendor,product,seats,vendorRate,invoiceRate}
+
+function addSKU(data) {
+  const idx = skuList.length;
+  skuList.push(data || {vendor:'',product:'',seats:'',vendorRate:'',invoiceRate:''});
+  renderSKUBuilder();
+}
+
+function removeSKU(idx) {
+  skuList.splice(idx,1);
+  renderSKUBuilder();
+}
+
+function renderSKUBuilder() {
+  document.getElementById('sku-builder-list').innerHTML = skuList.map((s,i)=>`
+    <div class="sku-card" id="sku-card-${i}">
+      <div class="sku-card-header">
+        <span class="sku-card-num">SKU ${i+1}</span>
+        ${skuList.length>1?`<button class="sku-remove" onclick="removeSKU(${i})">✕ Remove</button>`:''}
+      </div>
+      <div class="sku-grid">
+        <div class="fi"><label class="fl">Product / Plan *</label><input class="fh" placeholder="e.g. Google Workspace Business Plus" value="${s.product||''}" oninput="updateSKU(${i},'product',this.value)"/></div>
+        <div class="fi"><label class="fl">Vendor *</label>
+          <select class="fh" onchange="updateSKU(${i},'vendor',this.value)">
+            <option value="" ${!s.vendor?'selected':''}>Select…</option>
+            <option ${s.vendor==='Microsoft'?'selected':''}>Microsoft</option>
+            <option ${s.vendor==='Google'?'selected':''}>Google</option>
+            <option ${s.vendor==='Zoho'?'selected':''}>Zoho</option>
+          </select>
+        </div>
+        <div class="fi"><label class="fl">Seats *</label><input class="fh" type="number" placeholder="10" min="1" value="${s.seats||''}" oninput="updateSKU(${i},'seats',+this.value)"/></div>
+        <div class="fi"><label class="fl" style="color:var(--yw)">Our Vendor Cost/Seat (₹) *</label><input class="fh" type="number" placeholder="Vendor price" value="${s.vendorRate||''}" oninput="updateSKU(${i},'vendorRate',+this.value)" style="border-color:#FDE68A"/></div>
+        <div class="fi"><label class="fl" style="color:var(--gn)">Invoice to Customer/Seat (₹) *</label><input class="fh" type="number" placeholder="Your selling price" value="${s.invoiceRate||''}" oninput="updateSKU(${i},'invoiceRate',+this.value)" style="border-color:#A7F3D0"/></div>
+      </div>
+      <div class="sku-profit-preview" id="sku-preview-${i}">
+        <span style="color:var(--tx3)">Enter seats and prices above to see profit preview</span>
+      </div>
+    </div>`).join('');
+  refreshAllSKUPreviews();
+}
+
+function updateSKU(idx,field,val){ skuList[idx][field]=val; refreshSKUPreview(idx); }
+
+function refreshAllSKUPreviews(){ skuList.forEach((_,i)=>refreshSKUPreview(i)); }
+
+function refreshSKUPreview(i){
+  const s=skuList[i], el=document.getElementById(`sku-preview-${i}`);
+  if(!el) return;
+  const freq=document.getElementById('f-freq').value||'Annual';
+  const start=document.getElementById('f-start').value;
+  const end=document.getElementById('f-end').value;
+  const event=document.getElementById('f-event').value||start;
+  if(!s.seats||!s.vendorRate||!s.invoiceRate){ el.innerHTML=`<span style="color:var(--tx3)">Enter seats and prices to see preview</span>`; return; }
+  const sp=skuProfit(s,freq);
+  const pr=start&&end&&event ? proRata(s.invoiceRate,s.seats,start,end,event,freq) : null;
+  const mcls=sp.marginPct<10?'color:var(--rd)':sp.marginPct<20?'color:var(--yw)':'color:var(--gn)';
+  el.innerHTML=`
+    <div class="spp-item"><div class="spp-lbl">Vendor Cost/yr</div><div class="spp-val" style="color:var(--yw)">${INR(sp.vendorCostAnn)}</div></div>
+    <div class="spp-item"><div class="spp-lbl">Invoice/yr</div><div class="spp-val" style="color:var(--gn)">${INR(sp.invoiceAnn)}</div></div>
+    <div class="spp-item"><div class="spp-lbl">Gross Profit/yr</div><div class="spp-val" style="${mcls}">${INR(sp.profitAnn)}</div></div>
+    <div class="spp-item"><div class="spp-lbl">Margin %</div><div class="spp-val" style="${mcls}">${PCT(sp.marginPct)}</div></div>
+    ${pr?`<div class="spp-item"><div class="spp-lbl">Pro-Rata Invoice</div><div class="spp-val" style="color:var(--bl)">${INR(pr.amount)}</div></div>`:''}`;
+}
+
+// ════════════════════════════════════════════
+// FREQ / DATE AUTO-CALC
+// ════════════════════════════════════════════
+function setFreq(f){
+  document.getElementById('f-freq').value=f;
+  document.getElementById('fq-annual').classList.toggle('active',f==='Annual');
+  document.getElementById('fq-monthly').classList.toggle('active',f==='Monthly');
+  autoEnd(); refreshAllSKUPreviews();
+}
+function onStartChange(){ autoEnd(); refreshAllSKUPreviews(); }
+function autoEnd(){
+  const start=document.getElementById('f-start').value, freq=document.getElementById('f-freq').value;
+  if(!start) return;
+  const endVal=freq==='Monthly'?addMonths(start,1):addYears(start,1);
+  document.getElementById('f-end').value=endVal;
+  document.getElementById('end-hint').textContent=`✦ Auto: ${freq==='Monthly'?'1 month':'1 year'} from start (${fmtD(endVal)})`;
+  if(!document.getElementById('f-event').value) document.getElementById('f-event').value=start;
+}
+
+// ════════════════════════════════════════════
+// ADD / EDIT MODAL
+// ════════════════════════════════════════════
+let editId=null;
+function openAdd(){
+  editId=null; skuList=[];
+  document.getElementById('m-title').textContent='Add New Customer';
+  ['f-name','f-email','f-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-status').selectedIndex=0;
+  const t=today();
+  document.getElementById('f-start').value=t;
+  document.getElementById('f-event').value=t;
+  setFreq('Annual');
+  addSKU();
+  document.getElementById('modal-ov').classList.add('open');
+}
+function openEdit(id){
+  editId=id; const c=DB.find(x=>x.id===id);
+  document.getElementById('m-title').textContent='Edit Customer';
+  document.getElementById('f-name').value=c.name;
+  document.getElementById('f-email').value=c.email||'';
+  document.getElementById('f-start').value=c.start;
+  document.getElementById('f-end').value=c.end;
+  document.getElementById('f-event').value=c.event||c.start;
+  document.getElementById('f-status').value=c.status;
+  document.getElementById('f-notes').value=c.notes||'';
+  document.getElementById('end-hint').textContent=`✦ ${fmtD(c.end)}`;
+  setFreq(c.freq||'Annual');
+  skuList=JSON.parse(JSON.stringify(c.skus||[]));
+  if(!skuList.length) skuList=[{vendor:'',product:'',seats:'',vendorRate:'',invoiceRate:''}];
+  renderSKUBuilder();
+  document.getElementById('modal-ov').classList.add('open');
+}
+async function saveRecord(){
+  const name=document.getElementById('f-name').value.trim();
+  const start=document.getElementById('f-start').value;
+  const end=document.getElementById('f-end').value;
+  if(!name||!start||!end){ toast('Fill customer name and dates','red'); return; }
+  if(!skuList.length){ toast('Add at least one SKU','red'); return; }
+  for(let i=0;i<skuList.length;i++){
+    const s=skuList[i];
+    if(!s.vendor||!s.product||!s.seats||!s.vendorRate||!s.invoiceRate){ toast(`SKU ${i+1}: fill all fields including vendor cost and invoice price`,'red'); return; }
+  }
+  const rec={
+    id:editId||('INT-'+Date.now()),
+    name, email:document.getElementById('f-email').value.trim(),
+    freq:document.getElementById('f-freq').value||'Annual',
+    start, end, event:document.getElementById('f-event').value||start,
+    status:document.getElementById('f-status').value,
+    notes:document.getElementById('f-notes').value.trim(),
+    skus:skuList.map(s=>({...s,seats:+s.seats,vendorRate:+s.vendorRate,invoiceRate:+s.invoiceRate}))
+  };
+  showLoader(editId?'Updating…':'Saving…');
+  const {error}=await sb.from('customers').upsert(custToRow(rec));
+  hideLoader();
+  if(error){ toast('Save failed: '+error.message,'red'); return; }
+  closeModal('modal-ov'); await loadAll();
+  toast(editId?'Customer updated ✓':'Customer added ✓','green');
+}
+async function delRec(id){
+  if(!confirm('Delete this customer and all related records?')) return;
+  showLoader('Deleting…');
+  const {error}=await sb.from('customers').delete().eq('id',id);
+  hideLoader();
+  if(error){ toast('Error: '+error.message,'red'); return; }
+  await loadAll(); toast('Deleted','red');
+}
+
+// ════════════════════════════════════════════
+// SEAT CHANGE MODAL
+// ════════════════════════════════════════════
+let scCustId=null, scSKUIdx=0, scType='add';
+
+function openSCModal(custId){
+  const c=DB.find(x=>x.id===custId);
+  scCustId=custId; scType='add';
+  // If multiple SKUs, show picker — for simplicity default to first SKU
+  scSKUIdx=0;
+  document.getElementById('sc-modal-title').textContent='Seat Change — '+c.name;
+  const s=c.skus[0]||{};
+  document.getElementById('sc-modal-sub').textContent=`${s.vendor||''} · ${s.product||''} · ${c.freq} · Invoice ₹${s.invoiceRate||0}/seat`;
+  document.getElementById('sc-old').value=s.seats||0;
+  document.getElementById('sc-delta').value='';
+  document.getElementById('sc-date').value=today();
+  setSCType('add');
+  document.getElementById('sc-result').style.display='none';
+  document.getElementById('sc-save-btn').disabled=true;
+  document.getElementById('sc-modal-ov').classList.add('open');
+}
+function setSCType(t){
+  scType=t;
+  document.getElementById('ct-add').classList.toggle('active',t==='add');
+  document.getElementById('ct-rem').classList.toggle('active',t==='remove');
+  document.getElementById('sc-new-lbl').textContent=t==='add'?'Seats to Add':'Seats to Remove';
+  calcSC();
+}
+function calcSC(){
+  const c=DB.find(x=>x.id===scCustId), s=c.skus[scSKUIdx]||{};
+  const delta=+document.getElementById('sc-delta').value, scDate=document.getElementById('sc-date').value;
+  const result=document.getElementById('sc-result');
+  if(!delta||!scDate||delta<=0){ result.style.display='none'; document.getElementById('sc-save-btn').disabled=true; return; }
+  if(scType==='remove'&&delta>s.seats){ toast('Cannot remove more than current seats','red'); return; }
+  const newSeats=scType==='add'?s.seats+delta:s.seats-delta;
+  let prAmt, prSub, steps;
+  if(c.freq==='Monthly'){
+    const tot=daysInMonth(scDate), eom=endOfMonth(scDate), rem=dBetween(scDate,eom)+1;
+    const ratePerDay=s.invoiceRate/tot;
+    prAmt=Math.round(ratePerDay*delta*rem)*(scType==='remove'?-1:1);
+    prSub=`${delta} seats × ₹${s.invoiceRate}/mo × ${rem}/${tot} days`;
+    steps=scType==='add'?[
+      `Invoice rate: ₹${s.invoiceRate}/seat/month`,`Daily rate: ₹${s.invoiceRate}÷${tot} = ₹${ratePerDay.toFixed(2)}/day`,
+      `Days remaining in ${fmtMY(scDate)}: ${rem}`,`Pro-rata: ${delta} × ₹${ratePerDay.toFixed(2)} × ${rem} = ${INR(Math.abs(prAmt))}`,
+    ]:[
+      `Daily rate: ₹${s.invoiceRate}÷${tot} = ₹${ratePerDay.toFixed(2)}/day`,`Remaining days: ${rem}`,
+      `Credit: ${delta} × ₹${ratePerDay.toFixed(2)} × ${rem} = ${INR(Math.abs(prAmt))} credit`,
+    ];
+  } else {
+    const tot=dBetween(c.start,c.end)+1, rem=Math.max(dBetween(scDate,c.end)+1,0);
+    const annDelta=s.invoiceRate*delta;
+    prAmt=Math.round(annDelta*rem/tot)*(scType==='remove'?-1:1);
+    prSub=`${delta} seats × ₹${s.invoiceRate}/yr × ${rem}/${tot} days`;
+    steps=scType==='add'?[
+      `Annual invoice for ${delta} seats: ${delta}×₹${s.invoiceRate} = ${INR(annDelta)}`,
+      `Cycle: ${fmtD(c.start)}→${fmtD(c.end)} = ${tot} days`,`Remaining: ${rem} days`,
+      `Fraction: ${rem}÷${tot} = ${(rem/tot*100).toFixed(1)}%`,`Charge: ${INR(annDelta)}×${(rem/tot*100).toFixed(1)}% = ${INR(Math.abs(prAmt))}`,
+    ]:[
+      `Annual invoice for ${delta} seats: ${INR(annDelta)}`,`Remaining: ${rem} of ${tot} days`,
+      `Credit: ${INR(annDelta)}×${(rem/tot*100).toFixed(1)}% = ${INR(Math.abs(prAmt))} credit`,
+    ];
+  }
+  const nextMonthBill=newSeats*s.invoiceRate;
+  const finalStep=scType==='add'?`Bill customer: ${INR(Math.abs(prAmt))} pro-rata now`:`Issue credit note: ${INR(Math.abs(prAmt))}`;
+  document.getElementById('sc-steps').innerHTML=[...steps,finalStep].map((st,i,arr)=>`<div class="sc-step ${i===arr.length-1?'last':''}"><div class="sc-step-n">${i+1}</div><div>${st}</div></div>`).join('');
+  document.getElementById('pr-lbl').textContent=c.freq==='Monthly'?(scType==='add'?'Pro-Rata This Month':'Credit This Month'):(scType==='add'?'Pro-Rata This Cycle':'Credit This Cycle');
+  document.getElementById('sc-pr-val').textContent=(scType==='remove'?'−':'')+INR(Math.abs(prAmt));
+  document.getElementById('sc-pr-val').className='res-box-val '+(scType==='remove'?'orange':'blue');
+  document.getElementById('sc-pr-sub').textContent=prSub;
+  document.getElementById('sc-nm-val').textContent=INR(nextMonthBill)+(c.freq==='Monthly'?'/mo':'/yr');
+  document.getElementById('sc-nm-sub').textContent=`${newSeats} seats from ${fmtMY(startOfNextMonth(scDate))}`;
+  result.style.display='block'; document.getElementById('sc-save-btn').disabled=false;
+  const btn=document.getElementById('sc-save-btn');
+  btn.dataset.prorata=prAmt; btn.dataset.nextmonth=nextMonthBill; btn.dataset.newseats=newSeats; btn.dataset.delta=delta;
+}
+async function saveSeatChange(){
+  const c=DB.find(x=>x.id===scCustId), s=c.skus[scSKUIdx]||{};
+  const btn=document.getElementById('sc-save-btn');
+  const newSeats=+btn.dataset.newseats, prAmt=+btn.dataset.prorata, nextMonth=+btn.dataset.nextmonth, delta=+btn.dataset.delta;
+  const scDate=document.getElementById('sc-date').value;
+  const scRec={id:'SC-'+Date.now(),cust_id:scCustId,customer:c.name,vendor:s.vendor,sku_name:s.product,freq:c.freq,type:scType,delta,old_seats:s.seats,new_seats:newSeats,change_date:scDate,pro_rata:prAmt,next_month:nextMonth,invoice_rate:s.invoiceRate};
+  const updatedSKUs=c.skus.map((sk,i)=>i===scSKUIdx?{...sk,seats:newSeats}:sk);
+  showLoader('Saving…');
+  const [{error:e1},{error:e2}]=await Promise.all([
+    sb.from('seat_changes').insert(scRec),
+    sb.from('customers').update({skus:updatedSKUs}).eq('id',scCustId)
+  ]);
+  hideLoader();
+  if(e1||e2){ toast('Error: '+((e1||e2).message),'red'); return; }
+  closeModal('sc-modal-ov'); await loadAll();
+  toast(scType==='add'?`${delta} seats added ✓`:`${delta} seats removed ✓`,'green');
+}
+
+// ════════════════════════════════════════════
+// SEAT CHANGE LOG
+// ════════════════════════════════════════════
+function renderSCLog(){
+  const tb=document.getElementById('sc-tbody');
+  if(!SCLog.length){ tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="ei">📋</div><div class="et">No seat changes yet</div><div>Click 👥 on any customer to log a change</div></div></td></tr>`; return; }
+  tb.innerHTML=SCLog.map(s=>{
+    const tl=s.type==='add'?`<span style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace">+ Added</span>`:`<span style="background:var(--rd-lt);color:var(--rd);border:1px solid #FECACA;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace">− Removed</span>`;
+    const prd=s.type==='remove'?`<span style="color:var(--yw);font-weight:700;font-family:'JetBrains Mono',monospace">Credit ${INR(Math.abs(s.proRata))}</span>`:`<span style="color:var(--bl);font-weight:700;font-family:'JetBrains Mono',monospace">${INR(s.proRata)}</span>`;
+    return`<tr><td class="tm">${fmtD(s.date)}</td><td><div class="tn">${s.customer}</div><div class="ts">${s.custId}</div></td><td style="font-size:12px">${s.sku||'—'}</td><td>${tl}</td><td><span style="font-family:'JetBrains Mono',monospace"><b>${s.oldSeats}</b> → <b style="color:${s.type==='add'?'var(--gn)':'var(--rd)'}">${s.newSeats}</b> (${s.type==='add'?'+':'-'}${s.delta})</span></td><td>${prd}</td><td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--gn)">${INR(s.nextMonth)}${s.freq==='Monthly'?'/mo':'/yr'}</span></td></tr>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+// EXPORT
+// ════════════════════════════════════════════
+function exportCSV(){
+  const h=['Customer ID','Customer Name','Email','Billing Freq','Status','SKU #','Vendor','Product','Seats','Vendor Cost/Seat','Invoice/Seat','Annual Vendor Cost','Annual Invoice','Gross Profit','Margin %','Start','End','Event'];
+  const rows=[];
+  DB.forEach(c=>{
+    (c.skus||[]).forEach((s,i)=>{
+      const sp=skuProfit(s,c.freq);
+      rows.push([c.id,c.name,c.email,c.freq,c.status,i+1,s.vendor,s.product,s.seats,s.vendorRate,s.invoiceRate,sp.vendorCostAnn,sp.invoiceAnn,sp.profitAnn,sp.marginPct.toFixed(1)+'%',c.start,c.end,c.event||c.start].map(v=>`"${v||''}"`).join(','));
+    });
+  });
+  dl([h.join(','),...rows].join('\n'),'INT_Licenses_'+today()+'.csv');
+  toast('Exported ✓','green');
+}
+function exportProfitCSV(){
+  const h=['Customer','SKUs','Annual Invoice','Vendor Cost','Gross Profit','Margin %','Status'];
+  const rows=DB.map(c=>{const t=customerTotals(c);return[c.name,(c.skus||[]).length,t.invoiceAnn,t.vendorCostAnn,t.profitAnn,t.marginPct.toFixed(1)+'%',c.status].map(v=>`"${v||''}"`).join(',')});
+  dl([h.join(','),...rows].join('\n'),'INT_ProfitReport_'+today()+'.csv');
+  toast('Profit report exported ✓','green');
+}
+function dl(csv,filename){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download=filename; a.click(); }
+
+// ════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.getElementById('modal-ov').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal('modal-ov')});
+document.getElementById('sc-modal-ov').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal('sc-modal-ov')});
+function toast(msg,type='green'){ document.getElementById('tmsg').textContent=msg; document.getElementById('tdot').style.background=type==='green'?'var(--gn)':'var(--rd)'; const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500); }
+function renderAll(){ renderKPI(); renderTable(); }
+
+// ════════════════════════════════════════════
+// SUPABASE: you also need to run this SQL
+// to update the DB schema for the new model
+// ════════════════════════════════════════════
+document.getElementById('today-lbl').textContent=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+loadAll();
+</script>
+</body>
+</html>
